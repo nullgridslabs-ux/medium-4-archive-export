@@ -10,6 +10,16 @@ os.makedirs(BASE, exist_ok=True)
 with open("/tmp/flag.txt","w") as f:
     f.write("CTF{medium_archive_file}")
 
+@app.route("/")
+def index():
+    return """
+<h2>Archive Export Service</h2>
+<ul>
+<li>POST /export</li>
+<li>GET /health</li>
+</ul>
+"""
+
 @app.route("/health")
 def health():
     return "ok"
@@ -20,10 +30,10 @@ def export():
     zip_path = "/tmp/out.zip"
 
     with zipfile.ZipFile(zip_path,"w") as z:
-        # BUG: path directly used
         z.write(name, arcname=name)
 
     return send_file(zip_path, as_attachment=True)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
